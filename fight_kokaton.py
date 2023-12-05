@@ -67,6 +67,7 @@ class Bird:
         self.rct = self.img.get_rect()
         self.rct.center = xy
 
+    
     def change_img(self, num: int, screen: pg.Surface):
         """
         こうかとん画像を切り替え，画面に転送する
@@ -149,6 +150,34 @@ class Bomb:
         screen.blit(self.img, self.rct)
 
     
+class Explosion:    
+    """
+    爆発演出
+    """
+    def __init__(self,bomb: Bomb):
+        baseimg = pg.image.load(f"{MAIN_DIR}/fig/explosion.gif")
+        img1 = pg.transform.flip(baseimg,True,False)
+        img2 = pg.transform.flip(baseimg,True,True)
+        img3 = pg.transform.flip(baseimg,False,True)
+        self.imgs = [baseimg,img1,img2,img3]
+        self.img = baseimg
+        self.rct = bomb.rct
+        self.life = 90
+    def update(self,screen):
+        self.life -=1
+        change = self.life%40
+        if change <=10:
+            self.img = self.imgs[0]
+        elif 10< change  <= 20:
+            self.img = self.imgs[1] 
+        elif 20 < change <= 30:
+            self.img =  self.imgs[2]
+        else:
+            self.img = self.imgs[3]
+        
+        screen.blit(self.img,self.rct)
+        
+    
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
@@ -158,6 +187,7 @@ def main():
     beam = None
     clock = pg.time.Clock()
     tmr = 0
+    explos = []
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -180,6 +210,7 @@ def main():
                     beam = None
                     bombs[c] = None
                     bird.change_img(6, screen)
+                    explos.append(Explosion(bomb))
         bombs = [bomb for bomb in bombs if bomb is not None]
 
         key_lst = pg.key.get_pressed()
@@ -190,6 +221,9 @@ def main():
             beam.update(screen)
         for bomb in bombs: 
             bomb.update(screen)
+        for explo in explos:
+            explo.update(screen)
+        explos = [explo for explo in explos if explo.life >0]
         pg.display.update()
         tmr += 1
         clock.tick(50)
