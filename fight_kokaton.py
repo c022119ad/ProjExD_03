@@ -124,8 +124,8 @@ class Beam:
 class Bomb:
     colors = [(255,0,0),(0,255,0),(0,0,255),
               (255,255,0),(255,0,255),(0,255,255)]
-    #directions = [-5,+5]
-    directions =[0]  # デバッグ用で爆弾を動かさない
+    directions = [-5,+5]
+    #directions =[0]  # デバッグ用で爆弾を動かさない
     """
     爆弾に関するクラス
     """
@@ -244,8 +244,8 @@ def main():
         
         for beam in beams:
             beam.update(screen)
-        beams = [beam for beam in beams if 0< beam.rct.centerx <= WIDTH and 0 < beam.rct.centery <= HEIGHT]
-        print(len(beams))
+        beams = [beam for beam in beams if 0< beam.rct.centerx <= WIDTH 
+                 and 0 < beam.rct.centery <= HEIGHT]
         for bomb in bombs: 
             bomb.update(screen)
         for explo in explos:
