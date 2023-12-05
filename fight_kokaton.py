@@ -109,9 +109,7 @@ class Beam:
         self.rct =self.img.get_rect()
         self.rct.centery=bird.rct.centery+bird.rct.height*self.vy/5
         self.rct.centerx = bird.rct.centerx+bird.rct.width*self.vx/5
-        
-       
-        
+
     def update(self,screen: pg.Surface):
         """
         ビームを速度ベクトルself.vs,self.vyに基づき移動させる
@@ -170,6 +168,7 @@ class Explosion:
         self.img = baseimg
         self.rct = bomb.rct
         self.life = 90
+        
     def update(self,screen):
         self.life -=1
         change = self.life%40
@@ -184,17 +183,19 @@ class Explosion:
         
         screen.blit(self.img,self.rct)
 
+
 class Score:
-    x = 100
-    y = HEIGHT -50
-    def __init__(self,score):
+    x = 100  # 表示させるx座標
+    y = HEIGHT -50  # 表示させるy座標
+    """
+    爆弾を壊した数を表示させる関数、引数なし
+    """
+    def __init__(self):
         self.font = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30)
-        self.score = score
+        self.score = 0
         self.img = self.font.render(f"スコア：{self.score}",0,(0,0,255))
     
-        
     def update(self,screen,score):
-        
         self.score = score
         self.img = self.font.render(f"スコア：{self.score}",0,(0,0,255))
         screen.blit(self.img,[__class__.x,__class__.y])
@@ -209,7 +210,7 @@ def main():
     clock = pg.time.Clock()
     tmr = 0
     explos = []
-    score = Score(0)
+    score = Score()
     count = 0
     while True:
         for event in pg.event.get():
@@ -245,13 +246,13 @@ def main():
         for beam in beams:
             beam.update(screen)
         beams = [beam for beam in beams if 0< beam.rct.centerx <= WIDTH 
-                 and 0 < beam.rct.centery <= HEIGHT]
+                 and 0 < beam.rct.centery <= HEIGHT]  # Beamインスタンスの座標が画面内のもののみリストに残す
         for bomb in bombs: 
             bomb.update(screen)
         for explo in explos:
             explo.update(screen)
         score.update(screen,count)
-        explos = [explo for explo in explos if explo.life >0]
+        explos = [explo for explo in explos if explo.life >0]  # Explosionインスタンスのlifeが0より上のものをリストに残す
         pg.display.update()
         tmr += 1
         clock.tick(50)
