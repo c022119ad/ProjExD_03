@@ -124,8 +124,8 @@ class Beam:
 class Bomb:
     colors = [(255,0,0),(0,255,0),(0,0,255),
               (255,255,0),(255,0,255),(0,255,255)]
-    directions = [-5,+5]
-    #directions =[0]  # デバッグ用で爆弾を動かさない
+    #directions = [-5,+5]
+    directions =[0]  # デバッグ用で爆弾を動かさない
     """
     爆弾に関するクラス
     """
@@ -205,7 +205,7 @@ def main():
     bg_img = pg.image.load(f"{MAIN_DIR}/fig/pg_bg.jpg")
     bird = Bird(3, (900, 400))
     bombs = [Bomb() for _ in range(NUM_OF_BOMBS)]  # Bombインスタンスがn個並んだリスト
-    beam = None
+    beams = []
     clock = pg.time.Clock()
     tmr = 0
     explos = []
@@ -216,7 +216,7 @@ def main():
             if event.type == pg.QUIT:
                 return
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:  #スペースキーが押されたら
-                beam = Beam(bird)  #ビームインスタンスの生成
+                beams.append(Beam(bird))  #ビームインスタンスの生成
         
         screen.blit(bg_img, [0, 0])
         for bomb in bombs:
@@ -228,21 +228,24 @@ def main():
                 return
         for c, bomb in enumerate(bombs):
             
-            if beam is not None :
+            for c2, beam in enumerate(beams):
                 if beam.rct.colliderect(bomb.rct):
-                    beam = None
                     bombs[c] = None
+                    beams[c2] = None
                     bird.change_img(6, screen)
                     explos.append(Explosion(bomb))
                     count += 1
+            beams = [beam for beam in beams if beam is not None]
         bombs = [bomb for bomb in bombs if bomb is not None]
 
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
         
         
-        if beam:
+        for beam in beams:
             beam.update(screen)
+        beams = [beam for beam in beams if 0< beam.rct.centerx <= WIDTH and 0 < beam.rct.centery <= HEIGHT]
+        print(len(beams))
         for bomb in bombs: 
             bomb.update(screen)
         for explo in explos:
