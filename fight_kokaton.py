@@ -68,7 +68,6 @@ class Bird:
         self.rct.center = xy
         self.dire = (+5,0)
 
-    
     def change_img(self, num: int, screen: pg.Surface):
         """
         こうかとん画像を切り替え，画面に転送する
@@ -99,7 +98,6 @@ class Bird:
         
         
 class Beam:
-    
     def __init__(self,bird: Bird) :
         self.img = pg.image.load(f"{MAIN_DIR}/fig/beam.png")
         self.vx,self.vy = bird.dire[0],bird.dire[1]
@@ -199,6 +197,7 @@ class Score:
         self.score = score
         self.img = self.font.render(f"スコア：{self.score}",0,(0,0,255))
         screen.blit(self.img,[__class__.x,__class__.y])
+    
     
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
