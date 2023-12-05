@@ -125,7 +125,7 @@ class Bomb:
     colors = [(255,0,0),(0,255,0),(0,0,255),
               (255,255,0),(255,0,255),(0,255,255)]
     directions = [-5,+5]
-    
+    #directions =[0]  # デバッグ用で爆弾を動かさない
     """
     爆弾に関するクラス
     """
@@ -183,7 +183,21 @@ class Explosion:
             self.img = self.imgs[3]
         
         screen.blit(self.img,self.rct)
+
+class Score:
+    x = 100
+    y = HEIGHT -50
+    def __init__(self,score):
+        self.font = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30)
+        self.score = score
+        self.img = self.font.render(f"スコア：{self.score}",0,(0,0,255))
+    
         
+    def update(self,screen,score):
+        
+        self.score = score
+        self.img = self.font.render(f"スコア：{self.score}",0,(0,0,255))
+        screen.blit(self.img,[__class__.x,__class__.y])
     
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
@@ -195,6 +209,8 @@ def main():
     clock = pg.time.Clock()
     tmr = 0
     explos = []
+    score = Score(0)
+    count = 0
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -218,6 +234,7 @@ def main():
                     bombs[c] = None
                     bird.change_img(6, screen)
                     explos.append(Explosion(bomb))
+                    count += 1
         bombs = [bomb for bomb in bombs if bomb is not None]
 
         key_lst = pg.key.get_pressed()
@@ -230,6 +247,7 @@ def main():
             bomb.update(screen)
         for explo in explos:
             explo.update(screen)
+        score.update(screen,count)
         explos = [explo for explo in explos if explo.life >0]
         pg.display.update()
         tmr += 1
